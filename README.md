@@ -1,6 +1,6 @@
 # reunionou-backoffice
 
-## Nom-Prenom des participants: 
+## Prenom-Nom des participants: 
 - Alice Cai
 - Florence Cai
 - Thomas Dautecourt 
