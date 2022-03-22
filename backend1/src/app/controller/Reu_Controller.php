@@ -47,11 +47,12 @@ class Reu_Controller {
         //Get the user with some id
         $user = User::select(['id', 'mail', 'fullname', 'username', 'password'])
             ->where('id', '=', $id);
+        $user=$user->firstOrFail();
 
         //Complete the data
         $data = [
             "type" => "ressource",
-            "user" => $user,
+            "user" => $user->toArray(),
         ];
 
         return Writer::json_output($resp, 200, $data);
@@ -69,8 +70,8 @@ class Reu_Controller {
         //Complete the data
         $data = [
             "type" => "collection",
-            "count" => count($users),
-            "users" => $users,
+            "count" => count($events),
+            "events" => $events,
         ];
 
         return Writer::json_output($resp, 200, $data);
@@ -84,7 +85,8 @@ class Reu_Controller {
         //Get the event with some id
         $event = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
             ->where('id', '=', $id);
-
+        $event=$event->firstOrFail();
+          
         //Complete the data
         $data = [
             "type" => "ressource",
@@ -121,6 +123,7 @@ class Reu_Controller {
         $comment = Comment::select(['id', 'id_event', 'id_user', 'content'])
             ->where('id', '=', $id);
 
+        $comment=$comment->firstOrFail();
         //Complete the data
         $data = [
             "type" => "ressource",

@@ -43,9 +43,18 @@ $app->get('/hello/{name}',
     }
 );
 
-$app->get('/users/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneUser');
 
 $app->get('/users[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllUsers');
+
+$app->get('/users/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneUser');
+
+$app->get('/events[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllEvents');
+
+$app->get('/events/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneEvent');
+
+$app->get('/comments[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllComments');
+
+$app->get('/comments/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneCommebt');
 
 /*
 
