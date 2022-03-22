@@ -16,14 +16,14 @@ services:
     environment:
       - VHOST_HOSTNAME=docketu.iutnc.univ-lorraine.fr
       - VHOST_DOCROOT=/var/www/web
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
+#      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
+#      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
     ports:
       - "62640:80"
       - "19043:443"
     volumes:
-      - ./backend1/public:/var/www/web
-      - ./backend1/src:/var/www/src
+      - './backend1/public:/var/www/web'
+      - './backend1/src:/var/www/src'
     working_dir: /var/www/src
     networks:
       - d.net
@@ -44,8 +44,8 @@ services:
     - "62641:80"
     - "19143:443"
     volumes:
-    - ./backend2/public:/var/www/html
-    - ./backend2/src:/var/www/src
+    - './backend2/public:/var/www/html'
+    - './backend2/src:/var/www/src'
     working_dir: /var/www/src
     networks:
     - d.net
@@ -65,7 +65,7 @@ services:
     ports:
       - "62642:80"
     volumes:
-      - ./front/public:/usr/local/apache2/htdocs
+      - './front/public:/usr/local/apache2/htdocs'
     working_dir: /usr/local/apache2/htdocs
     networks:
       - d.net
@@ -83,7 +83,7 @@ services:
       - MYSQL_PASSWORD=com
       - MYSQL_DATABASE=com
     volumes :
-      - ./backend1/sql:/var/sql
+      - './backend1/sql:/var/sql'
     networks:
       - d.net
 
@@ -102,7 +102,7 @@ services:
   mongo:
     image: mongo:latest
     volumes:
-    - ./backend2/data:/var/data
+    - './backend2/data:/var/data'
     working_dir: /var/data
     networks:
     - d.net
