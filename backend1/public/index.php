@@ -43,4 +43,19 @@ $app->get('/hello/{name}',
     }
 );
 
+$app->get('/users/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneUser');
+
+$app->get('/users[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllUsers');
+
+/*
+
+$app->post('/commands[/]', \lbs\command\app\controller\CommandController::class.':createCommand');
+
+$app->get('/commands/{id}[/]', \lbs\command\app\controller\CommandController::class.':getCommand')
+    ->add(\lbs\command\app\middleware\CommandMiddleware::class.':checkToken');
+
+
+$app->put('/commands/{id}[/]', \lbs\command\app\controller\CommandController::class.':replaceCommand')
+    ->add(\lbs\command\app\middleware\CommandMiddleware::class.':checkToken');*/
+
 $app->run();

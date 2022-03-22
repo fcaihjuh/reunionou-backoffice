@@ -1,6 +1,6 @@
 <?php
 
-namespace lbs\command\app\utils;
+namespace reu\back1\app\utils;
 
 use \Psr\Http\Message\ResponseInterface as Response ;
 
