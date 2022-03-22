@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'de6ae4c4d1b1e0e66af0a833c8f2d9b23d7a061a',
+    'reference' => '2bef888b1b38d249c3d641175a39cd52e76873c0',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'de6ae4c4d1b1e0e66af0a833c8f2d9b23d7a061a',
+      'reference' => '2bef888b1b38d249c3d641175a39cd52e76873c0',
     ),
     'davidepastore/slim-validation' => 
     array (

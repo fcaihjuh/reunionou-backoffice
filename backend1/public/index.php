@@ -33,9 +33,9 @@ $app->get('/hello/{name}',
         $name = $args['name'];
         $dbfile = $this->settings['dbfile'];
 
-        $r = User::select('id')->get();
+        $r = User::select()->get();
         foreach($r as $l){
-           echo $l->id; 
+           echo $l->fullname; 
         }
 
         $resp->getBody()->write("<h1>Hello, $name </h1> <h2>$dbfile</h2>");

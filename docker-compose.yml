@@ -31,7 +31,7 @@ services:
       - mysql:db
 
 ###########
-# service php / apache utilisant le vhost par défaut 
+# service php / apache utilisant le vhost par défaut
 #
 #  le service sera accessible à https://docketu.iutnc.univ-lorraine.fr:19143
 ###########
