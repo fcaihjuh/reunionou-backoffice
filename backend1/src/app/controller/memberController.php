@@ -7,11 +7,9 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 //Model
 use \reu\back1\app\models\User as User;
-use \reu\back1\app\models\Event as Event;
-use \reu\back1\app\models\Comment as Comment;
 
 use \reu\back1\app\utils\Writer as Writer;
-use DateTime;
+//use DateTime;
 use Ramsey\Uuid\Uuid;
 
 
