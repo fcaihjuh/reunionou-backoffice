@@ -89,19 +89,19 @@ class memberController {
             $errors = $req->getAttribute('errors');
 
             if (isset($errors['nom_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['nom_user']);
+                ($this->container->get('logger.error'))->error("error",$errors['nom_user']);
                 return Writer::json_error($resp, 403, "Le champ 'nom_user' ne doit pas être vide et doit contenir que des lettres");
             }
             if (isset($errors['mail_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['mail_user']);
+                ($this->container->get('logger.error'))->error("error",$errors['mail_user']);
                 return Writer::json_error($resp, 403, "Le champ 'mail_user' ne doit pas être vide et doit être valide");
             }
             if (isset($errors['pwd_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['pwd_user']);
+                ($this->container->get('logger.error'))->error("error",$errors['pwd_user']);
                 return Writer::json_error($resp, 403, "Le champ 'pwd_user' ne doit pas être vide et doit être valide");
             }
             if (isset($errors['events'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['events']);
+                ($this->container->get('logger.error'))->error("error",$errors['events']);
                 return Writer::json_error($resp, 403, "le champ 'events' ne doit pas être vide et toutes les informations doivent être valide");
             }
         } else {
@@ -115,10 +115,10 @@ class memberController {
             $new_user_id = Uuid::uuid4();
             $new_user->id =  $new_user_id;
 
-            $new_user->nom = filter_var($received_user['nom_user'], FILTER_UNSAFE_RAW);
+            $new_user->fullname = filter_var($received_user['nom_user'], FILTER_UNSAFE_RAW);
             $new_user->mail = filter_var($received_user['mail_user'], FILTER_SANITIZE_EMAIL);
-            $new_user->nom = filter_var($received_user['pseudo_user'], FILTER_UNSAFE_RAW);
-            $new_user->nom = filter_var($received_user['pwd_user'], FILTER_UNSAFE_RAW);
+            $new_user->username = filter_var($received_user['pseudo_user'], FILTER_UNSAFE_RAW);
+            $new_user->password = filter_var($received_user['pwd_user'], FILTER_UNSAFE_RAW);
             
             $new_user->save();
 
@@ -144,7 +144,8 @@ class memberController {
        
     } 
 
-    public function signIn(Request $req, Response $resp, array $args): Response {
+
+        public function signIn(Request $req, Response $resp, array $args): Response {
 
         //Get the id in the URI
         $id = $args['id'];
