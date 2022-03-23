@@ -4,7 +4,7 @@ namespace reu\back1\app\controller;
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-
+use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 //Model
 use \reu\back1\app\models\Event as Event;
 
@@ -49,7 +49,8 @@ class eventController {
 
         //Get the event with some id
         $event = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
-            ->where('id', '=', $id);
+            ->where('id', '=', $id)
+            ->firstOrFail();
 
         //Complete the data
         $data = [

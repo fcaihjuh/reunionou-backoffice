@@ -25,11 +25,11 @@ $app->get('/events[/]', eventController::class. ':getAllEvents')->setName('allEv
 
 
 //Route pour modifier le contenu d'un événement
-$app->put('/events/{id}[/]', eventController::class. ':putEvent')->setName('putEvent');
+//$app->put('/events/{id}[/]', eventController::class. ':putEvent')->setName('putEvent');
 
 
 //Route pour les participants d'un événement
-$app->get('/events/{id}/members', eventController::class.':getAllUsers')->setName('allUser');
+$app->get('/events/{id}/members', eventController::class.':getAllUsers')->setName('allUsers');
 
 
 //Route pour un participant
@@ -37,7 +37,7 @@ $app->get('/events/{id}/member', memberController::class.':getOneUser')->setName
 
 
 //Route pour tous les commentaires
-$app->get('/comments[/]', commentController::class.':getAllComments')->setName('allComment');
+$app->get('/comments[/]', commentController::class.':getAllComments')->setName('allComments');
 
 
 //Route pour retourner le contenu d'un commentaire
