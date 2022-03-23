@@ -54,7 +54,15 @@ $app->get('/events/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':o
 
 $app->get('/comments[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllComments');
 
-$app->get('/comments/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneCommebt');
+$app->get('/comments/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneComment');
+
+$app->post('/signup[/]', \reu\back1\app\controller\Reu_Controller::class.':signUp');
+
+$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\Reu_Controller::class.':signIns');
+
+$app->delete('/users/{id}/signout[/]', \reu\back1\app\controller\Reu_Controller::class.':signOut');
+
+//$app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
 
 /*
 
