@@ -8,10 +8,11 @@
     "firebase/php-jwt": "^5.0",
     "davidepastore/slim-validation": "^0.5",
     "monolog/monolog": "^2.1"
+
   },
   "autoload": {
     "psr-4" : {
-      "reu\\back1\\" : "src"
+      "reu\\back1\\" : "."
 
     }
 
