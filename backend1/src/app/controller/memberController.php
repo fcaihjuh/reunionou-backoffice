@@ -81,13 +81,9 @@ class memberController {
  
 
     public function signUp(Request $req, Response $resp, array $args): Response {
-                // $clientError = $this->c->clientError;
-        //Les données reçues pour la nouvelle commande
+        //Les données reçues pour le nouvel utilisateur
         $received_user = $req->getParsedBody();
 
-        //! comment traiter le message de retours dans ce cas ? un json_error ou pas ? 
-        //! quelle est l'erreur adéquate dans ce cas ? 403 ? 
-        //! dois-je customiser les messages d'erreur ?
         if ($req->getAttribute('has_errors')) {
 
             $errors = $req->getAttribute('errors');
