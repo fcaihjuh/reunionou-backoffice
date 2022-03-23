@@ -58,11 +58,16 @@ $app->get('/comments/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.'
 
 $app->post('/signup[/]', \reu\back1\app\controller\Reu_Controller::class.':signUp');
 
-$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\Reu_Controller::class.':signIns');
+$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\Reu_Controller::class.':signIn');
 
 $app->delete('/users/{id}/signout[/]', \reu\back1\app\controller\Reu_Controller::class.':signOut');
 
-//$app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
+$app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
+
+$app->options('/{routes:.+}',
+    function(Request $rq, Response $rs, array $args) {
+        return $rs;
+    });
 
 /*
 

@@ -4,23 +4,25 @@ namespace reu\back1\app\controller;
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use reu\back1\app\utils\Writer;
 
 //Model
-use reu\back1\app\models\User;
-use reu\back1\app\models\Event;
+use \reu\back1\app\models\User as User;
+
+use \reu\back1\app\utils\Writer as Writer;
+//use DateTime;
+use Ramsey\Uuid\Uuid;
+
+
 
 //Error
 
-class Reu_Controller {
+class memberController {
 
     private $container;
 
     public function __construct(\Slim\Container $container){
         $this->container = $container;
     }
-
-    ///////////////USER//////////////
 
     public function getAllUsers(Request $req, Response $resp, array $args): Response {
         
@@ -36,10 +38,9 @@ class Reu_Controller {
         ];
 
         return Writer::json_output($resp, 200, $data);
-
     }
 
-    public function oneUser(Request $req, Response $resp, array $args): Response {
+    public function getOneUser(Request $req, Response $resp, array $args): Response {
 
         //Get the id in the URI
         $id = $args['id'];
@@ -59,89 +60,14 @@ class Reu_Controller {
 
     } 
 
-    ///////////////EVENT//////////////
-
-    public function getAllEvents(Request $req, Response $resp, array $args): Response {
-
-        //Get all the events
-        $events = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
-            ->get();
-
-        //Complete the data
-        $data = [
-            "type" => "collection",
-            "count" => count($events),
-            "events" => $events,
-        ];
-
-        return Writer::json_output($resp, 200, $data);
-    }
-
-    public function oneEvent(Request $res, Response $resp, array $args): Response {
-
-        //Get the id in the URI
-        $id = $args['id'];
-
-        //Get the event with some id
-        $event = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
-            ->where('id', '=', $id);
-        $event=$event->firstOrFail();
-          
-        //Complete the data
-        $data = [
-            "type" => "ressource",
-            "event" => $event,
-        ];
-
-        return Writer::json_output($resp, 200, $data);
-    }
-
-    ///////////////COMMENT//////////////
-
-    public function getAllComments(Request $req, Response $resp, array $args): Response {
-
-        //Get all the comments
-        $comments = Comment::select(['id', 'id_event', 'id_user', 'content'])
-            ->get();
-
-        //complete the data
-        $data = [
-            "type" => "collection", 
-            "count" => count($comments),
-            "comments" => $comments,
-        ];
-
-        return Writer::json_output($resp, 200, $data);
-    }
-
-    public function oneComment(Request $res, Response $resp, array $args): Response {
-
-        //Get the id in the URI
-        $id = $args['id'];
-
-        //Get the comment with some id
-        $comment = Comment::select(['id', 'id_event', 'id_user', 'content'])
-            ->where('id', '=', $id);
-
-        $comment=$comment->firstOrFail();
-
-        //Complete the data
-        $data = [
-            "type" => "ressource",
-            "comment" => $comment,
-        ];
-
-        return Writer::json_output($resp, 200, $data);
-    }
+ 
 
     public function signUp(Request $req, Response $resp, array $args): Response {
-        // $clientError = $this->c->clientError;
-        //Les données reçues pour la nouvelle commande
+        
+        //Les données reçues pour le nouveau membre
         $createUser = $req->getParsedBody();
 
-        //! comment traiter le message de retours dans ce cas ? un json_error ou pas ? 
-        //! quelle est l'erreur adéquate dans ce cas ? 403 ? 
-        //! dois-je customiser les messages d'erreur ?
+
         if ($req->getAttribute('has_errors')) {
 
             $errors = $req->getAttribute('errors');
@@ -150,8 +76,8 @@ class Reu_Controller {
                 ($this->c->get('logger.error'))->error("error",$errors['fullname']);
                 return Writer::json_error($resp, 403, "Le champ 'fullname' ne doit pas être vide et doit contenir que des lettres");
             }
-            if (isset($createUser['email'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['email']);
+            if (isset($createUser['mail'])) {
+                ($this->c->get('logger.error'))->error("error",$errors['mail']);
                 return Writer::json_error($resp, 403, "Le champ 'email' ne doit pas être vide et doit être valide");
             }
             if (isset($createUser['username'])) {
@@ -162,17 +88,16 @@ class Reu_Controller {
                 ($this->c->get('logger.error'))->error("error",$errors['password']);
                 return Writer::json_error($resp, 403, "Le champ 'password' ne doit pas être vide et doit être valide");
             }
-        } 
-        try {
+        } else {
 
-            //créer la commande et son id
+            //créer le membre et son id
             $new_user = new User();
             //$new_user_id = Uuid::uuid4();
             //$new_user->id =  $new_user_id;
-            $new_user->nom = filter_var($createUser['fullname'], FILTER_SANITIZE_STRING);
-            $new_user->mail = filter_var($createUser['email'], FILTER_SANITIZE_EMAIL);
-            $new_user->nom = filter_var($createUser['username'], FILTER_SANITIZE_STRING);
-            $new_user->nom = filter_var($createUser['password'], FILTER_UNSAFE_RAW);
+            $new_user->fullname = filter_var($createUser['fullname'], FILTER_SANITIZE_STRING);
+            $new_user->mail = filter_var($createUser['mail'], FILTER_SANITIZE_EMAIL);
+            $new_user->username = filter_var($createUser['username'], FILTER_SANITIZE_STRING);
+            $new_user->password = filter_var($createUser['password'], FILTER_UNSAFE_RAW);
 
             //Création du token unique et cryptographique
             $token_user = random_bytes(32);
@@ -184,7 +109,7 @@ class Reu_Controller {
 
             // Récupération du path pour le location dans header
             $path_user = $this->container->router->pathFor(
-                'oneUser',
+                'getOneUser',
                 ['id' => $new_user->id]
             );
 
@@ -221,11 +146,18 @@ class Reu_Controller {
             "user" => $user,
         ];
 
-        return Writer::json_output($resp, 200, $data);
+        //Configure the response header
+        $resp = $resp->withStatus(200)
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+        
+        //Write in the body with data encode a json_encode
+        $resp->getBody()->write(json_encode($data));
 
-        } 
+        //Return the response 
+        return $resp;
+    } 
 
-        public function signOut(Request $req, Response $resp, array $args): Response {
+    public function signOut(Request $req, Response $resp, array $args): Response {
 
         //Get the id in the URI
         $id = $args['id'];
@@ -240,9 +172,18 @@ class Reu_Controller {
             "user" => $user,
         ];
 
-        return Writer::json_output($resp, 200, $data);
-        }
+        //Configure the response header
+        $resp = $resp->withStatus(200)
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+        
+        //Write in the body with data encode a json_encode
+        $resp->getBody()->write(json_encode($data));
 
+        //Return the response 
+        return $resp;
+    } 
+
+    
 }
 
 

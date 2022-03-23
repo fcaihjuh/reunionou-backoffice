@@ -7,4 +7,7 @@
         protected $primaryKey = 'id';     
         public    $timestamps = false;    
 
+        public function event(){
+            return $this->belongsTo('reu\back\models\Event', 'id_event');
+        } 
     }
