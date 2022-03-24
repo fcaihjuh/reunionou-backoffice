@@ -5,12 +5,12 @@ namespace reu\back1\app\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-//Model
 use \reu\back1\app\models\User as User;
 
 use \reu\back1\app\utils\Writer as Writer;
-//use DateTime;
 use Ramsey\Uuid\Uuid;
+
+use Firebase\JWT\JWT;
 
 
 
@@ -126,21 +126,36 @@ class MemberController {
 
         public function signIn(Request $req, Response $resp, array $args): Response {
 
-        //Get the id in the URI
-        $id = $args['id'];
+            $userData = $req->getParsedBody();
 
-        //Get the user with some id
-        $user = User::select(['id', 'mail', 'fullname', 'username', 'password'])
-            ->where('id', '=', $id);
+            if (!isset($userData['mail'])) {
+                return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit contenir que des lettres");
+            }
+            if (!isset($userData['password'])) {
+                return Writer::json_error($resp, 400, "Le champ 'password' ne doit pas être vide et doit être valide");
+            }
 
-        //Complete the data
-        $data = [
-            "type" => "ressource",
-            "user" => $user,
-        ];
+            try{
+                $user = User::where('mail',filter_var($userData['mail'], FILTER_SANITIZE_EMAIL))->firstOrFail();
+                $check=password_verify($userData['password'], $user->password);
+                if($check){
+                    $token = JWT::encode( [ 'iss'=>'http://docketu.iutnc.univ-lorraine.fr:62640',
+                                            'aud'=>'http://docketu.iutnc.univ-lorraine.fr:62640',
+                                            'iat'=>time(), 'exp'=>time()+3600,
+                                            'uid' => $user->id,
+                                            'lvl' => '0' ],
+                                            $secret, 'HS512' );
+                    return Writer::json_output($resp, 200);
+                }
+                else{
+                    return Writer::json_error($resp, 400, 'Wrong login or password');
+                }
 
-        return Writer::json_output($resp, 200, $data);
-    } 
+            }
+            catch (\Exception $e) {
+                return Writer::json_error($resp, 500, $e->getMessage());
+            }
+        } 
 
     public function signOut(Request $req, Response $resp, array $args): Response {
 

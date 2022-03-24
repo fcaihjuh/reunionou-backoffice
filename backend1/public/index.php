@@ -44,23 +44,23 @@ $app->get('/hello/{name}',
 );
 
 
-$app->get('/users[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllUsers');
+$app->get('/users[/]', \reu\back1\app\controller\MemberController::class.':getAllUsers');
 
-$app->get('/users/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneUser');
+$app->get('/users/{id}[/]', \reu\back1\app\controller\MemberController::class.':getOneUser');
 
-$app->get('/events[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllEvents');
+$app->get('/events[/]', \reu\back1\app\controller\EventController::class.':getAllEvents');
 
-$app->get('/events/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneEvent');
+$app->get('/events/{id}[/]', \reu\back1\app\controller\EventController::class.':getOneEvent');
 
-$app->get('/comments[/]', \reu\back1\app\controller\Reu_Controller::class.':getAllComments');
+$app->get('/comments[/]', \reu\back1\app\controller\CommentController::class.':getAllComments');
 
-$app->get('/comments/{id}[/]', \reu\back1\app\controller\Reu_Controller::class.':oneComment');
+$app->get('/comments/{id}[/]', \reu\back1\app\controller\CommentController::class.':getOneComment');
 
-$app->post('/signup[/]', \reu\back1\app\controller\Reu_Controller::class.':signUp');
+$app->post('/users[/]', \reu\back1\app\controller\MemberController::class.':signUp');
 
-$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\Reu_Controller::class.':signIn');
+$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\MemberController::class.':signIn');
 
-$app->delete('/users/{id}/signout[/]', \reu\back1\app\controller\Reu_Controller::class.':signOut');
+$app->delete('/users/{id}/signout[/]', \reu\back1\app\controller\MemberController::class.':signOut');
 
 $app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
 
