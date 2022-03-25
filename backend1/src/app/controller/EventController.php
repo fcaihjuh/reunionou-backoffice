@@ -7,6 +7,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 
 use \reu\back1\app\models\Event;
+use \reu\back1\app\utils\Writer as Writer;
 
 class EventController {
 
@@ -77,9 +78,9 @@ class EventController {
         $new_event = new Event();
         $new_event->title = filter_var($eventData['title'], FILTER_SANITIZE_EMAIL);
         $new_event->description = filter_var($eventData['desc'], FILTER_SANITIZE_EMAIL);
-        $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date'].);
+        $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
         $new_event->place = filter_var($eventData['place'], FILTER_SANITIZE_EMAIL);;
-
+        $new_event->id_user = 'test';
         //Création du token unique et cryptographique
         $token_event = random_bytes(32);
         $token_event = bin2hex($token_event);
@@ -107,7 +108,27 @@ class EventController {
     }
 
     catch (\Exception $e) {
-        return Writer::json_error($rs, 500, $e->getMessage());
+        return Writer::json_error($resp, 500, $e->getMessage());
+    }
+
+    }
+
+    public function deleteEvent(Request $req, Response $resp, array $args): Response {
+
+        //Get the id in the URI
+        $id = $args['id'];
+
+        //Get the user with some id
+        $event = Event::select()
+            ->where('id', '=', $id);
+
+        //Complete the data
+        $data = [
+            "type" => "ressource",
+            "user" => $event,
+        ];
+
+        return Writer::json_output($resp, 200, $data);
     }
 }
 

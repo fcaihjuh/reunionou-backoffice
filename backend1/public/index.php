@@ -50,6 +50,8 @@ $app->get('/users/{id}[/]', \reu\back1\app\controller\MemberController::class.':
 
 $app->get('/events[/]', \reu\back1\app\controller\EventController::class.':getAllEvents');
 
+$app->post('/events[/]', \reu\back1\app\controller\EventController::class.':createEvent');
+
 $app->get('/events/{id}[/]', \reu\back1\app\controller\EventController::class.':getOneEvent');
 
 $app->get('/comments[/]', \reu\back1\app\controller\CommentController::class.':getAllComments');

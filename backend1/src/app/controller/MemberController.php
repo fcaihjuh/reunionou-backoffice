@@ -174,6 +174,25 @@ class MemberController {
 
         return Writer::json_output($resp, 200, $data);
     } 
+
+    public function deleteUser(Request $req, Response $resp, array $args): Response {
+
+        //Get the id in the URI
+        $id = $args['id'];
+
+        //Get the user with some id
+        $user = User::select()
+            ->where('id', '=', $id);
+
+        //Complete the data
+        $data = [
+            "type" => "ressource",
+            "user" => $user,
+        ];
+
+        return Writer::json_output($resp, 200, $data);
+    } 
+
 }
 
 
