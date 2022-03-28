@@ -4,7 +4,7 @@
 use \reu\back1\app\controller\eventController;
 use \reu\back1\app\controller\memberController;
 use \reu\back1\app\controller\commentController;
-use \reu\back1\app\middleware\Middleware;
+use \reu\back1\app\middleware\Cors;
 use \reu\back1\app\middleware\EventValidator as EventValidator;
 use \DavidePastore\Slim\Validation\Validation as Validation ;
 
@@ -55,6 +55,8 @@ $app->post('/members/signin[/]', memberController::class. ':signIn')->setName('s
 //Route pour la déconnexion
 //$app->delete('/members/signout[/]', memberController::class.':signOut')->setName('signOut');
 
+
+$app->add(Cors::class.':corsHeaders') ;
 
 
 
