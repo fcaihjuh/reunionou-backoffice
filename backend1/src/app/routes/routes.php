@@ -21,7 +21,7 @@ $app->get('/events[/]', eventController::class. ':getAllEvents')->setName('allEv
 
 
 //Route pour créer un événement 
-//$app->post('/events/create[/]', eventController::class. ':createEvent')->setName('createEvent');
+$app->post('/events/createevent[/]', eventController::class. ':createEvent')->setName('createEvent');
 
 
 //Route pour modifier le contenu d'un événement
