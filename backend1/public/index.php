@@ -46,7 +46,7 @@ $app->get('/hello/{name}',
 //Les routes de l'application
 require_once __DIR__ . '/../src/app/routes/routes.php';
 
-$app->add(Cors::class.':corsHeaders') ;
+$app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
 
 $app->options('/{routes:.+}',
     function(Request $rq, Response $rs, array $args) {
