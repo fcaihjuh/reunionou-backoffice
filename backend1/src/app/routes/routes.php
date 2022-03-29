@@ -8,8 +8,6 @@ use \reu\back1\app\middleware\Cors;
 use \reu\back1\app\middleware\EventValidator as EventValidator;
 use \DavidePastore\Slim\Validation\Validation as Validation ;
 
-$validators = EventValidator::create_validators();
-
 //Routes de l'API
 
 //Route pour retourner le contenu d'un événement

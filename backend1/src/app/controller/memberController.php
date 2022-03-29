@@ -30,7 +30,7 @@ class memberController {
     public function getAllUsers(Request $req, Response $resp, array $args): Response {
         
         //Get all the Users
-        $users = User::select(['id', 'mail', 'fullname', 'username', 'password'])
+        $users = User::select(['id', 'mail', 'fullname', 'password'])
             ->get();
         
         //complete the data 
@@ -58,7 +58,7 @@ class memberController {
         $id = $args['id'];
 
         //Get the user with some id
-        $user = User::select(['id', 'mail', 'fullname', 'username', 'password'])
+        $user = User::select(['id', 'mail', 'fullname', 'password'])
             ->where('id', '=', $id);
 
         //Complete the data
@@ -99,10 +99,6 @@ class memberController {
                 ($this->c->get('logger.error'))->error("error",$errors['mail']);
                 return Writer::json_error($resp, 403, "Le champ 'mail' ne doit pas être vide et doit être valide");
             }
-            if (isset($createUser['username'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['username']);
-                return Writer::json_error($resp, 403, "Le champ 'username' ne doit pas être vide et doit être valide");
-            }
             if (isset($createUser['password'])) {
                 ($this->c->get('logger.error'))->error("error",$errors['password']);
                 return Writer::json_error($resp, 403, "Le champ 'password' ne doit pas être vide et doit être valide");
@@ -116,7 +112,6 @@ class memberController {
             //$new_user->id =  $new_user_id;
             $new_user->fullname = filter_var($createUser['fullname'], FILTER_UNSAFE_RAW);
             $new_user->mail = filter_var($createUser['mail'], FILTER_SANITIZE_EMAIL);
-            $new_user->username = filter_var($createUser['username'], FILTER_UNSAFE_RAW);
             $new_user->password = filter_var($createUser['password'], FILTER_UNSAFE_RAW);
 
             //Création du token unique et cryptographique
@@ -186,7 +181,7 @@ class memberController {
         $id = $args['id'];
 
         //Get the user with some id
-        $user = User::select(['id', 'mail', 'fullname', 'username', 'password'])
+        $user = User::select(['id', 'mail', 'fullname', 'password'])
             ->where('id', '=', $id);
 
         //Complete the data

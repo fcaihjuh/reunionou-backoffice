@@ -9,7 +9,7 @@ INSERT INTO user VALUES (1, 'alexwally@gmail.com', 'Alex Wally', 'alwa', '345FCX
  (2, 'sophiegerr', 'Sophie Gerard', '56728FBe3'),
 INSERT INTO user VALUES (2, 'sandrinedup@gmail.com', '
 Sandrine Dupont', 'JH84flA');
-INSERT INTO user VALUES (3, 'leoyoung@hotmail.com', 'Leo Young', 'thebestman', 'QLek52f');
+INSERT INTO user VALUES (3, 'leoyoung@hotmail.com', 'Leo Young', 'QLek52f');
 
 DROP TABLE IF EXISTS `event` ;
 CREATE TABLE `event` (`id` BIGINT AUTO_INCREMENT NOT NULL,
