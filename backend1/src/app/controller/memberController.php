@@ -24,6 +24,7 @@ class memberController {
     public function __construct(\Slim\Container $container){
         $this->container = $container;
     }
+    
 
     public function getAllUsers(Request $req, Response $resp, array $args): Response {
         
@@ -149,7 +150,24 @@ class memberController {
 
         } 
 
-    
+    public function signIn(Request $req, Response $resp, array $args): Response {
+        $user = User::where('mail', $mail)->first();
+        if(!is_null($user)) {
+            if(AuthController::verifyPassword($password, $user->password)) {
+                $response = [
+                    'post'      =>  true,
+                    'fullname'  =>  $user->fullname,
+                    'mail'     =>  $user->mail,
+                    'token'     =>  $user->token
+                ];
+                return json_encode($response);
+            } else {
+                return self::error(self::$message['incorrect']);
+            }
+        } else {
+            return self::error(self::$message['incorrect']);
+        }
+        }
 
     public function signOut(Request $req, Response $resp, array $args): Response {
 
