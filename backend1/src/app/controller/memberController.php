@@ -151,8 +151,33 @@ class memberController {
         } 
 
     public function signIn(Request $req, Response $resp, array $args): Response {
-        
-        }
+        $userData = $req->getParsedBody();
+
+            if (!isset($userData['mail'])) {
+                return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit être valide");
+            }
+            if (!isset($userData['password'])) {
+                return Writer::json_error($resp, 400, "Le champ 'password' ne doit pas être vide et doit être valide");
+            }
+
+            try{
+                $user = User::where('mail',filter_var($userData['mail'], FILTER_SANITIZE_EMAIL))->firstOrFail();
+                if(AuthController::verifyPassword($userData['password'], $user->password)){
+                    $data=[
+                        'post'      => true,
+                        'fullname'  => $user->fullname,
+                        'email'     => $user->email,
+                        'token'     => $user->token
+                    ];
+                    return Writer::json_output($resp, 200, $data);
+                } else{
+                    return Writer::json_error($resp, 400, 'Wrong login or password');
+                }
+            }
+            catch (\Exception $e) {
+                return Writer::json_error($resp, 400, $e->getMessage());
+            }
+        } 
 
     public function signOut(Request $req, Response $resp, array $args): Response {
 
