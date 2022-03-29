@@ -45,7 +45,7 @@ $app->get('/comments/{id}[/]', eventController::class. ':getOneComment')->setNam
 
 
 //Route pour l'inscription
-$app->post('/signup[/]', memberController::class. ':signUp')->setName('signUp');
+$app->post('/signup[/]', memberController::class. ':signUp')->setName('signUp')->add(Cors::class.':corsHeaders');
 
 
 //Route pour la connexion
@@ -54,10 +54,6 @@ $app->post('/members/signin[/]', memberController::class. ':signIn')->setName('s
 
 //Route pour la déconnexion
 //$app->delete('/members/signout[/]', memberController::class.':signOut')->setName('signOut');
-
-
-$app->add(Cors::class.':corsHeaders') ;
-
 
 
 

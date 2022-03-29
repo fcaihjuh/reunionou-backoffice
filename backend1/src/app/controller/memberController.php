@@ -77,44 +77,45 @@ class memberController {
 
     } 
 
- 
-
     public function signUp(Request $req, Response $resp, array $args): Response {
-        
-        //Les données reçues pour le nouveau membre
+        // $clientError = $this->c->clientError;
+        //Les données reçues pour la nouvelle commande
         $createUser = $req->getParsedBody();
 
-
+        //! comment traiter le message de retours dans ce cas ? un json_error ou pas ? 
+        //! quelle est l'erreur adéquate dans ce cas ? 403 ? 
+        //! dois-je customiser les messages d'erreur ?
         if ($req->getAttribute('has_errors')) {
 
             $errors = $req->getAttribute('errors');
 
-            if (isset($createUser['nom_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['nom_user']);
-                return Writer::json_error($resp, 403, "Le champ 'nom_user' ne doit pas être vide et doit contenir que des lettres");
+            if (isset($createUser['fullname'])) {
+                ($this->c->get('logger.error'))->error("error",$errors['fullname']);
+                return Writer::json_error($resp, 403, "Le champ 'fullname' ne doit pas être vide et doit contenir que des lettres");
             }
-            if (isset($createUser['mail_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['mail_user']);
-                return Writer::json_error($resp, 403, "Le champ 'mail_user' ne doit pas être vide et doit être valide");
+            if (isset($createUser['mail'])) {
+                ($this->c->get('logger.error'))->error("error",$errors['mail']);
+                return Writer::json_error($resp, 403, "Le champ 'mail' ne doit pas être vide et doit être valide");
             }
-            if (isset($createUser['pseudo_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['pseudo_user']);
-                return Writer::json_error($resp, 403, "Le champ 'pseudo_user' ne doit pas être vide et doit être valide");
+            if (isset($createUser['username'])) {
+                ($this->c->get('logger.error'))->error("error",$errors['username']);
+                return Writer::json_error($resp, 403, "Le champ 'username' ne doit pas être vide et doit être valide");
             }
-            if (isset($createUser['pwd_user'])) {
-                ($this->c->get('logger.error'))->error("error",$errors['pwd_user']);
-                return Writer::json_error($resp, 403, "Le champ 'pwd_user' ne doit pas être vide et doit être valide");
+            if (isset($createUser['password'])) {
+                ($this->c->get('logger.error'))->error("error",$errors['password']);
+                return Writer::json_error($resp, 403, "Le champ 'password' ne doit pas être vide et doit être valide");
             }
-        } else {
+        } 
+        try {
 
-            //créer le membre et son id
+            //créer la commande et son id
             $new_user = new User();
-            $new_user_id = Uuid::uuid4();
-            $new_user->id =  $new_user_id;
-            $new_user->nom = filter_var($createUser['nom_user'], FILTER_SANITIZE_STRING);
-            $new_user->mail = filter_var($createUser['mail_user'], FILTER_SANITIZE_EMAIL);
-            $new_user->nom = filter_var($createUser['pseudo_user'], FILTER_SANITIZE_STRING);
-            $new_user->nom = filter_var($createUser['pwd_user'], FILTER_UNSAFE_RAW);
+            //$new_user_id = Uuid::uuid4();
+            //$new_user->id =  $new_user_id;
+            $new_user->fullname = filter_var($createUser['fullname'], FILTER_UNSAFE_RAW);
+            $new_user->mail = filter_var($createUser['mail'], FILTER_SANITIZE_EMAIL);
+            $new_user->username = filter_var($createUser['username'], FILTER_UNSAFE_RAW);
+            $new_user->password = filter_var($createUser['password'], FILTER_UNSAFE_RAW);
 
             //Création du token unique et cryptographique
             $token_user = random_bytes(32);
@@ -141,38 +142,14 @@ class memberController {
             $resp->withHeader('X-lbs-token', $new_user->token);
             return Writer::json_output($resp, 201)->withHeader("Location", $path_user);
         }
-/*
+
         catch (\Exception $e) {
-            return Writer::json_error($rs, 500, $e->getMessage());
-        }**/
+            return Writer::json_error($resp, 500, $e->getMessage());
+        }
 
         } 
 
-        public function signIn(Request $req, Response $resp, array $args): Response {
-
-        //Get the id in the URI
-        $id = $args['id'];
-
-        //Get the user with some id
-        $user = User::select(['id', 'mail', 'fullname', 'username', 'password'])
-            ->where('id', '=', $id);
-
-        //Complete the data
-        $data = [
-            "type" => "ressource",
-            "user" => $user,
-        ];
-
-        //Configure the response header
-        $resp = $resp->withStatus(200)
-            ->withHeader('Content-Type', 'application/json; charset=utf-8');
-        
-        //Write in the body with data encode a json_encode
-        $resp->getBody()->write(json_encode($data));
-
-        //Return the response 
-        return $resp;
-    } 
+    
 
     public function signOut(Request $req, Response $resp, array $args): Response {
 
