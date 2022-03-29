@@ -11,6 +11,7 @@ use \reu\back1\app\models\User as User;
 use \reu\back1\app\utils\Writer as Writer;
 //use DateTime;
 use Ramsey\Uuid\Uuid;
+use Firebase\JWT\JWT;
 
 
 
