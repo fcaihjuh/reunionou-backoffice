@@ -17,14 +17,10 @@ class EventController {
         $this->container = $container;
     }
 
+    public function getEvents(Request $req, Response $resp, array $args): Response {
 
-    public function getAllEvents(Request $req, Response $resp, array $args): Response {
+       $events = Event::select(['id', 'title', 'description', 'date', 'place'])->get();
 
-       //Get all the events
-       $events = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
-       ->get();
-
-        //Complete the data
         $data = [
             "type" => "collection",
             "count" => count($events),
@@ -35,22 +31,29 @@ class EventController {
     }
 
 
-    public function getOneEvent(Request $res, Response $resp, array $args): Response {
-
-        //Get the id in the URI
+    public function getEvent(Request $res, Response $resp, array $args): Response {
         $id = $args['id'];
+        $owned = Event::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
+        if($owned){
+            $event = Event::where('id', '=', $id)->firstOrFail();
+            $data = [
+                "type" => "ressource",
+                "event" => $event,
+            ];
+            return Writer::json_output($resp, 200, $data);
+        }
+        else{
+            return Writer::json_error($resp, 403, 'Permission forbidden');
+        }
+    }
 
-        //Get the event with some id
-        $event = Event::select(['id', 'title', 'description', 'date', 'place', 'id_user'])
-            ->where('id', '=', $id);
-        $event=$event->firstOrFail();
-          
-        //Complete the data
+    public function getPublicEvent(Request $res, Response $resp, array $args) {
+        $token = $args['token'];
+        $event = Event::where('token', $token)->first();
         $data = [
             "type" => "ressource",
             "event" => $event,
         ];
-
         return Writer::json_output($resp, 200, $data);
     }
 
@@ -60,7 +63,7 @@ class EventController {
         $eventData = $req->getParsedBody();
 
         if (!isset($eventData['title'])) {
-            return Writer::json_error($resp, 400, "Le champ 'fullname' ne doit pas être vide et doit être validé");
+            return Writer::json_error($resp, 400, "Le champ 'fullname' ne doit pas être vide et doit être valide");
         }
         if (!isset($eventData['desc'])) {
             return Writer::json_error($resp, 400, "Le champ 'email' ne doit pas être vide et doit être valide");
@@ -74,61 +77,87 @@ class EventController {
 
         try {
 
-        //créer l'événement et son id
-        $new_event = new Event();
-        $new_event->title = filter_var($eventData['title'], FILTER_SANITIZE_EMAIL);
-        $new_event->description = filter_var($eventData['desc'], FILTER_SANITIZE_EMAIL);
-        $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
-        $new_event->place = filter_var($eventData['place'], FILTER_SANITIZE_EMAIL);;
-        $new_event->id_user = 'test';
-        //Création du token unique et cryptographique
-        $token_event = random_bytes(32);
-        $token_event = bin2hex($token_event);
-        $new_event->token = $token_event;
-        
-        $new_event->save();
+            //créer l'événement 
+            $new_event = new Event();
+            $new_event->title = filter_var($eventData['title'], FILTER_SANITIZE_STRING);
+            $new_event->description = filter_var($eventData['desc'], FILTER_SANITIZE_STRING);
+            $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
+            $new_event->place = filter_var($eventData['place'], FILTER_SANITIZE_STRING);;
+            $new_event->id_user = $_SESSION['id'];
 
+            //Création du token unique et cryptographique
+            $token_event = bin2hex(random_bytes(32));
+            $new_event->token = $token_event;
+            
+            $new_event->save();
 
-        // Récupération du path pour le location dans header
-        /*$path_user = $this->container->router->pathFor(
-            '',
-            ['id' => $new_user->id]
-        );*/
+            //Construire la réponse : 
+            $data = [
+                "post" => "OK",
+            ];
 
-        //Construire la réponse : 
-        $response = [
-            "type" => "ressource",
-            "user" => $new_event->toArray(),
-        ];
+            return Writer::json_output($resp, 201, $data);
+        }
 
-        //Le retour
-        $resp->getBody()->write(json_encode($response));
-        $resp->withHeader('X-lbs-token', $new_event->token);
-        return Writer::json_output($resp, 201);//->withHeader("Location", $path_user);
+        catch (\Exception $e) {
+            return Writer::json_error($resp, 500, $e->getMessage());
+        }
+
     }
 
-    catch (\Exception $e) {
-        return Writer::json_error($resp, 500, $e->getMessage());
-    }
+    public static function editEvent(Request $req, Response $resp, array $args): Response {
 
+        $eventData = $req->getParsedBody();
+
+        if (!isset($eventData['title'])) {
+            return Writer::json_error($resp, 400, "Le champ 'fullname' ne doit pas être vide et doit être valide");
+        }
+        if (!isset($eventData['desc'])) {
+            return Writer::json_error($resp, 400, "Le champ 'email' ne doit pas être vide et doit être valide");
+        }
+        if (!isset($eventData['date'])) {
+            return Writer::json_error($resp, 400, "Le champ 'date' ne doit pas être vide et doit être valide");
+        }
+        if (!isset($eventData['place'])) {
+            return Writer::json_error($resp, 400, "Le champ 'place' ne doit pas être vide et doit être valide");
+        } 
+
+        try{
+            $event= Event::where('id', $id)->count();
+            if($event){
+
+                $title = filter_var($eventData['title'], FILTER_SANITIZE_STRING);
+                $description = filter_var($eventData['desc'], FILTER_SANITIZE_STRING);
+                $date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
+                $place = filter_var($eventData['place'], FILTER_SANITIZE_STRING);
+
+                Event::where('id', $id)->update(['title' => $title, 'description' => $description, 'date' => $date, 'place' => $place]);
+                $data = [
+                    "post" => "OK",
+                ];
+                return Writer::json_output($resp, 200, $data);
+            }
+            else{
+                return Writer::json_error($resp, 200, "Event $id not found");
+            }
+        }
+        catch (\Exception $e){
+            return Writer::json_error($resp, 500, $e->getMessage());
+        }
     }
 
     public function deleteEvent(Request $req, Response $resp, array $args): Response {
 
-        //Get the id in the URI
-        $id = $args['id'];
+        $event = Event::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
+        if($event){
+            Comment::where('event_id', $id)->delete();
+            Event::where('id', $id)->delete();
 
-        //Get the user with some id
-        $event = Event::select()
-            ->where('id', '=', $id);
-
-        //Complete the data
-        $data = [
-            "type" => "ressource",
-            "user" => $event,
-        ];
-
-        return Writer::json_output($resp, 200, $data);
+            return Writer::json_output($resp, 200);
+        }
+        else{
+            return Writer::json_error($resp, 404, 'Event not found');
+        }
     }
 }
 

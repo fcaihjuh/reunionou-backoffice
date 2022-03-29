@@ -1,8 +1,4 @@
 <?php
-/**
- * File:  index.php
- *
- */
 
 require_once  __DIR__ . '/../src/vendor/autoload.php';
 
@@ -20,49 +16,31 @@ $db->addConnection($conf);
 $db->setAsGlobal();           
 $db->bootEloquent();   
 
-
 $config = require_once __DIR__. '/../src/app/conf/settings.php';
 $deps = require_once __DIR__.'/../src/app/conf/deps.php';
+$errors = require_once __DIR__.'/../src/app/conf/errors.php';
 
-$c=new \Slim\Container(array_merge($config, $deps));
+$c=new \Slim\Container(array_merge($config, $deps, $errors));
 
 $app = new \Slim\App($c);
 
-$app->get('/hello/{name}',
-    function (Request $req, Response $resp, $args) {
-        $name = $args['name'];
-        $dbfile = $this->settings['dbfile'];
+$app->get('/events[/]', \reu\back1\app\controller\EventController::class.':getEvents')->add(new BackMiddleware($c));
+$app->get('/event/{id}[/]', \reu\back1\app\controller\EventController::class.':getEvent')->add(new BackMiddleware($c));
+$app->get('/public_event/{token}[/]', \reu\back1\app\controller\EventController::class.':getPublicEvent');
+$app->post('/event[/]', \reu\back1\app\controller\EventController::class.':createEvent')->add(new BackMiddleware($c));
+$app->put('/event/{id}[/]', \reu\back1\app\controller\EventController::class.':editEvent')->add(new BackMiddleware($c));
+$app->delete('/event/{id}[/]', \reu\back1\app\controller\EventController::class.':deleteEvent')->add(new BackMiddleware($c));
 
-        $r = User::select()->get();
-        foreach($r as $l){
-           echo $l->fullname; 
-        }
+$app->get('/comments[/]', \reu\back1\app\controller\CommentController::class.':getComments')->add(new BackMiddleware($c));
+$app->get('/comments/{id}[/]', \reu\back1\app\controller\CommentController::class.':getComment')->add(new BackMiddleware($c));
+$app->get('/public_comments/{token}[/]', \reu\back1\app\controller\CommentController::class.':getPublicComments');
+$app->post('/comment/{id}[/]', \reu\back1\app\controller\CommentController::class.':postComment')->add(new BackMiddleware($c));
 
-        $resp->getBody()->write("<h1>Hello, $name </h1> <h2>$dbfile</h2>");
-        return $resp;
-    }
-);
+$app->get('/users[/]', \reu\back1\app\controller\MemberController::class.':getUsers')->add(new BackMiddleware($c));
+$app->get('/user/{id}[/]', \reu\back1\app\controller\MemberController::class.':getUser')->add(new BackMiddleware($c));
 
-
-$app->get('/users[/]', \reu\back1\app\controller\MemberController::class.':getAllUsers');
-
-$app->get('/users/{id}[/]', \reu\back1\app\controller\MemberController::class.':getOneUser');
-
-$app->get('/events[/]', \reu\back1\app\controller\EventController::class.':getAllEvents');
-
-$app->post('/events[/]', \reu\back1\app\controller\EventController::class.':createEvent');
-
-$app->get('/events/{id}[/]', \reu\back1\app\controller\EventController::class.':getOneEvent');
-
-$app->get('/comments[/]', \reu\back1\app\controller\CommentController::class.':getAllComments');
-
-$app->get('/comments/{id}[/]', \reu\back1\app\controller\CommentController::class.':getOneComment');
-
-$app->post('/users[/]', \reu\back1\app\controller\MemberController::class.':signUp');
-
-$app->post('/users/{id}/signin[/]', \reu\back1\app\controller\MemberController::class.':signIn');
-
-$app->delete('/users/{id}/signout[/]', \reu\back1\app\controller\MemberController::class.':signOut');
+$app->post('/signup[/]', \reu\back1\app\controller\MemberController::class.':signUp');
+$app->post('/signin[/]', \reu\back1\app\controller\MemberController::class.':signIn');
 
 $app->add(\reu\back1\app\middleware\Cors::class.':corsHeaders') ;
 
@@ -70,16 +48,5 @@ $app->options('/{routes:.+}',
     function(Request $rq, Response $rs, array $args) {
         return $rs;
     });
-
-/*
-
-$app->post('/commands[/]', \lbs\command\app\controller\CommandController::class.':createCommand');
-
-$app->get('/commands/{id}[/]', \lbs\command\app\controller\CommandController::class.':getCommand')
-    ->add(\lbs\command\app\middleware\CommandMiddleware::class.':checkToken');
-
-
-$app->put('/commands/{id}[/]', \lbs\command\app\controller\CommandController::class.':replaceCommand')
-    ->add(\lbs\command\app\middleware\CommandMiddleware::class.':checkToken');*/
 
 $app->run();

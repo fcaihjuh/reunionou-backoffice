@@ -5,13 +5,11 @@ namespace reu\back1\app\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-//Model
+
 use \reu\back1\app\models\Comment;
+use \reu\back1\app\utils\Writer;
 
-
-//Error
-
-class commentController {
+class CommentController {
 
     private $container;
 
@@ -20,13 +18,10 @@ class commentController {
     }
 
 
-    public function getAllComments(Request $req, Response $resp, array $args): Response {
+    public function getComments(Request $req, Response $resp, array $args): Response {
 
-        //Get all the comments
-        $comments = Comment::select(['id', 'id_event', 'id_user', 'content'])
-            ->get();
+        $comments = Comment::where('user_id', $_SESSION['id'])->get();
 
-        //complete the data
         $data = [
             "type" => "collection", 
             "count" => count($comments),
@@ -36,26 +31,64 @@ class commentController {
         return Writer::json_output($resp, 200, $data);
     }
 
-    public function getOneComment(Request $res, Response $resp, array $args): Response {
+    public function getComment(Request $res, Response $resp, array $args): Response {
 
-        //Get the id in the URI
         $id = $args['id'];
+        $owned = Comment::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
 
-        //Get the comment with some id
-        $comment = Comment::select(['id', 'id_event', 'id_user', 'content'])
-            ->where('id', '=', $id);
+        if($owned){
+            $comment = Comment::where('event_id', '=', $id)->orderBy('id', 'DESC')->get();
+            $data = [
+                "type" => "ressource",
+                "comment" => $comment,
+            ];
+            
+        }
+        else{
+            return Writer::json_error($resp, 403, 'Permission forbidden');
+        }
+    }
 
-        $comment=$comment->firstOrFail();
-
-        //Complete the data
+    public function getPublicComments(Request $res, Response $resp, array $args): Response {
+        $token = $args['token'];
+        $event_id = Event::where('token', $token)->first()->id;
+        $comments = Comment::where('event_id', $event_id)->orderBy('id', 'DESC')->get();
         $data = [
             "type" => "ressource",
-            "comment" => $comment,
+            "event" => $comments,
         ];
-
         return Writer::json_output($resp, 200, $data);
     }
 
+    public function postComment(Request $res, Response $resp, array $args): Response{
+
+        $commentData = $req->getParsedBody();
+
+        if (!isset($commentData['content'])) {
+            return Writer::json_error($resp, 400, "Le champ 'content' ne doit pas être vide et doit être valide");
+        }
+        if (!isset($commentData['event_id'])) {
+            return Writer::json_error($resp, 400, "Le champ 'event_id' ne doit pas être vide et doit être valide");
+        }
+
+        try{
+            $new_comment=new Comment();
+            $new_comment->content= $commentData['content'];
+            $new_comment->user_id=$_SESSION['id'],
+            $new_comment->event_id=$commentData['event_id'],
+
+            $data = [
+                'post'      => true,
+                'user_id'   => $_SESSION['id'],
+                'event_id'  =>  $commentData['event_id']
+            ];
+
+            return Writer::json_output($resp, 201, $data);
+        }
+        catch (\Exception $e) {
+            return Writer::json_error($resp, 500, $e->getMessage());
+        }
+    }
 }
 
 
