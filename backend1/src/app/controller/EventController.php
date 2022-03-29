@@ -33,7 +33,7 @@ class EventController {
 
     public function getEvent(Request $res, Response $resp, array $args): Response {
         $id = $args['id'];
-        $owned = Event::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
+        $owned = Event::where(['id' => $id, 'id_user' => $_SESSION['id']])->count();
         if($owned){
             $event = Event::where('id', '=', $id)->firstOrFail();
             $data = [
@@ -79,14 +79,14 @@ class EventController {
 
             //créer l'événement 
             $new_event = new Event();
-            $new_event->title = filter_var($eventData['title'], FILTER_SANITIZE_STRING);
-            $new_event->description = filter_var($eventData['desc'], FILTER_SANITIZE_STRING);
+            $new_event->title = filter_var($eventData['title']);
+            $new_event->description = filter_var($eventData['desc']);
             $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
-            $new_event->place = filter_var($eventData['place'], FILTER_SANITIZE_STRING);;
-            $new_event->id_user = $_SESSION['id'];
+            $new_event->place = filter_var($eventData['place']);;
+            $new_event->id_user = 3;
 
             //Création du token unique et cryptographique
-            $token_event = bin2hex(random_bytes(32));
+            $token_event = bin2hex(random_bytes(16));
             $new_event->token = $token_event;
             
             $new_event->save();
@@ -126,10 +126,10 @@ class EventController {
             $event= Event::where('id', $id)->count();
             if($event){
 
-                $title = filter_var($eventData['title'], FILTER_SANITIZE_STRING);
-                $description = filter_var($eventData['desc'], FILTER_SANITIZE_STRING);
+                $title = filter_var($eventData['title']);
+                $description = filter_var($eventData['desc']);
                 $date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
-                $place = filter_var($eventData['place'], FILTER_SANITIZE_STRING);
+                $place = filter_var($eventData['place']);
 
                 Event::where('id', $id)->update(['title' => $title, 'description' => $description, 'date' => $date, 'place' => $place]);
                 $data = [

@@ -75,12 +75,12 @@ class MemberController {
 
         try {
 
-            $user = User::where('email', $email)->first();
+            $user = User::where('mail', $userData['mail'])->first();
             if(is_null($user)){
                 //créer le membre et son id
                 $new_user = new User();
                 $new_user->id = Uuid::uuid4()->toString();
-                $new_user->fullname = filter_var($userData['fullname'], FILTER_SANITIZE_EMAIL);
+                $new_user->fullname = filter_var($userData['fullname'], FILTER_SANITIZE_STRING);
                 $new_user->mail = filter_var($userData['mail'], FILTER_SANITIZE_EMAIL);
                 $new_user->username = filter_var($userData['username'], FILTER_SANITIZE_STRING);
 
@@ -88,7 +88,7 @@ class MemberController {
                 $new_user->password = AuthController::hashPassword($password);;
 
                 //Création du token unique et cryptographique
-                $token_user = bin2hex(random_bytes(32));
+                $token_user = bin2hex(random_bytes(16));
                 $new_user->token = $token_user;
                 
                 $new_user->save();
@@ -104,7 +104,7 @@ class MemberController {
             } 
         }
         catch (\Exception $e) {
-            return Writer::json_error($rs, 500, $e->getMessage());
+            return Writer::json_error($resp, 500, $e->getMessage());
         }
 
         } 
@@ -127,7 +127,7 @@ class MemberController {
                         'post'      => true,
                         'username'  => $user->username, 
                         'fullname'  => $user->fullname,
-                        'email'     => $user->email,
+                        'email'     => $user->mail,
                         'token'     => $user->token
                     ];
                     return Writer::json_output($resp, 200, $data);

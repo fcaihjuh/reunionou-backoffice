@@ -11,9 +11,12 @@ $config = [
             "max.age"=> 60*60,
             "credentials"=> true
         ],
-        //'debug.log' => __DIR__.'../log/debug.log',
-        //'log.level' => \Monolog\Logger::DEBUG,
-        //'log.name' => 'slim.log',
+        'debug.log' => __DIR__.'../log/debug.log',
+        'log.level' => \Monolog\Logger::DEBUG,
+        'log.name' => 'slim.log',
+        'error.log'=>  __DIR__ . '/log/warn.log',
+        'error.level' => \Monolog\Logger::WARNING,
+        'error.name' =>'error.log'
     ],
 ];
 
