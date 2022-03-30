@@ -5,7 +5,7 @@ namespace reu\back1\app\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-
+use \reu\back1\app\models\Event;
 use \reu\back1\app\models\Comment;
 use \reu\back1\app\utils\Writer;
 
@@ -17,11 +17,9 @@ class CommentController {
         $this->container = $container;
     }
 
-
     public function getComments(Request $req, Response $resp, array $args): Response {
 
-
-        $comments = Comment::select()->get();
+        $comments = Comment::where(['id' => $id, 'id_user' => $_SESSION['id']])->get();;
 
         $data = [
             "type" => "collection", 
@@ -35,15 +33,15 @@ class CommentController {
     public function getComment(Request $res, Response $resp, array $args): Response {
 
         $id = $args['id'];
-        $owned = Comment::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
+        $owned = Comment::where(['id' => $id, 'id_user' => $_SESSION['id']])->count();
 
         if($owned){
-            $comment = Comment::where('event_id', '=', $id)->orderBy('id', 'DESC')->get();
+            $comment = Comment::where('id_event', '=', $id)->orderBy('id', 'DESC')->get();
             $data = [
                 "type" => "ressource",
                 "comment" => $comment,
             ];
-            
+            return Writer::json_output($resp, 200, $data);
         }
         else{
             return Writer::json_error($resp, 403, 'Permission forbidden');
@@ -61,7 +59,7 @@ class CommentController {
         return Writer::json_output($resp, 200, $data);
     }
 
-    public function postComment(Request $res, Response $resp, array $args): Response{
+    public function postComment(Request $req, Response $resp, array $args): Response{
 
         $commentData = $req->getParsedBody();
 
@@ -73,15 +71,12 @@ class CommentController {
         }
 
         try{
-            $new_comment=new Comment();
-            $new_comment->content= $commentData['content'];
-            $new_comment->user_id=$_SESSION['id'],
-            $new_comment->event_id=$commentData['event_id'],
+            Comment::insert(['content' => $commentData['content'], 'id_user' => $_SESSION['id'], 'id_event' => $commentData['event_id']]);
 
             $data = [
                 'post'      => true,
-                'user_id'   => $_SESSION['id'],
-                'event_id'  =>  $commentData['event_id']
+                'id_user'   => $_SESSION['id'],
+                'id_event'  =>  $commentData['event_id']
             ];
 
             return Writer::json_output($resp, 201, $data);

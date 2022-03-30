@@ -26,7 +26,7 @@ class MemberController {
 
     public function getUsers(Request $req, Response $resp, array $args): Response {
         
-        $users = User::select(['id', 'mail', 'fullname', 'username'])->get();
+        $users = User::select(['id', 'mail', 'fullname'])->get();
         
         $data = [
             "type" => "collection",
@@ -41,7 +41,7 @@ class MemberController {
 
         $id = $args['id'];
 
-        $user = User::select(['id', 'mail', 'fullname', 'username'])
+        $user = User::select(['id', 'mail', 'fullname'])
             ->where('id', '=', $id)->firstOrFail();
 
         $data = [
@@ -120,7 +120,6 @@ class MemberController {
                 if(AuthController::verifyPassword($userData['password'], $user->password)){
                     $data=[
                         'post'      => true,
-                        'username'  => $user->username, 
                         'fullname'  => $user->fullname,
                         'email'     => $user->mail,
                         'token'     => $user->token

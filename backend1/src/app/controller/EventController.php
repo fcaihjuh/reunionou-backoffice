@@ -7,6 +7,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 
 use \reu\back1\app\models\Event;
+use \reu\back1\app\models\Comment;
 use \reu\back1\app\utils\Writer;
 
 class EventController {
@@ -83,7 +84,7 @@ class EventController {
             $new_event->description = filter_var($eventData['desc']);
             $new_event->date = \DateTime::CreateFromFormat('Y-m-d H:i', $eventData['date']);
             $new_event->place = filter_var($eventData['place']);;
-            $new_event->id_user = 3;
+            $new_event->id_user = $_SESSION['id'];
 
             //Création du token unique et cryptographique
             $token_event = bin2hex(random_bytes(16));
@@ -123,6 +124,7 @@ class EventController {
         } 
 
         try{
+            $id = $args['id'];
             $event= Event::where('id', $id)->count();
             if($event){
 
@@ -147,10 +149,10 @@ class EventController {
     }
 
     public function deleteEvent(Request $req, Response $resp, array $args): Response {
-
-        $event = Event::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
+        $id = $args['id'];
+        $event = Event::where(['id' => $id, 'id_user' => $_SESSION['id']])->count();
         if($event){
-            Comment::where('event_id', $id)->delete();
+            Comment::where('id_event', $id)->delete();
             Event::where('id', $id)->delete();
 
             return Writer::json_output($resp, 200);

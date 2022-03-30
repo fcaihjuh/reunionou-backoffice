@@ -10,4 +10,8 @@
         public function event(){
             return $this->belongsTo('reu\back\models\Event', 'id_event');
         } 
+
+        public function user(){
+            return $this->belongsTo('reu\back\models\User', 'id_user');
+        }
     }
