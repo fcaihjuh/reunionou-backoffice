@@ -66,9 +66,6 @@ class MemberController {
             if (!isset($userData['mail'])) {
                 return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit être valide");
             }
-            if (!isset($userData['username'])) {
-                return Writer::json_error($resp, 400, "Le champ 'username' ne doit pas être vide et doit être valide");
-            }
             if (!isset($userData['password'])) {
                 return Writer::json_error($resp, 400, "Le champ 'password' ne doit pas être vide et doit être valide");
             } 
@@ -79,10 +76,8 @@ class MemberController {
             if(is_null($user)){
                 //créer le membre et son id
                 $new_user = new User();
-                $new_user->id = Uuid::uuid4()->toString();
                 $new_user->fullname = filter_var($userData['fullname'], FILTER_SANITIZE_STRING);
                 $new_user->mail = filter_var($userData['mail'], FILTER_SANITIZE_EMAIL);
-                $new_user->username = filter_var($userData['username'], FILTER_SANITIZE_STRING);
 
                 $password=filter_var($userData['password'], FILTER_UNSAFE_RAW);
                 $new_user->password = AuthController::hashPassword($password);;

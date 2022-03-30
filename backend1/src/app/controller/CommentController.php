@@ -20,7 +20,8 @@ class CommentController {
 
     public function getComments(Request $req, Response $resp, array $args): Response {
 
-        $comments = Comment::where('user_id', $_SESSION['id'])->get();
+
+        $comments = Comment::select()->get();
 
         $data = [
             "type" => "collection", 

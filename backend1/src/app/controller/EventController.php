@@ -7,7 +7,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 
 use \reu\back1\app\models\Event;
-use \reu\back1\app\utils\Writer as Writer;
+use \reu\back1\app\utils\Writer;
 
 class EventController {
 

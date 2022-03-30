@@ -6,8 +6,6 @@
         protected $table      = 'user'; 
         protected $primaryKey = 'id';     
         public    $timestamps = false; 
-        public $incrementing = false;
-        public $keyType='string';   
 
         public function event (){
             return $this->hasMany('reu\back\models\Event', 'id_user');
