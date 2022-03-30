@@ -1,5 +1,4 @@
 <?php
-
 namespace reu\back1\app\controller;
 
 class AuthController {

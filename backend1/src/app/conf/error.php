@@ -4,8 +4,6 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-
-
 return [
     //fonction notFoundHandler déclenche une erreur lorsque la route mise en URL n'est pas défini
     'notFoundHandler' => function (Container $container) {
