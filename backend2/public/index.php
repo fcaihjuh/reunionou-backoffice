@@ -34,6 +34,8 @@ $c['view'] = function($container) {
 
 $app = new \Slim\App($c);
 
+$app->add(new \reu\backoffice\BO\middleware\FlashMiddleware($c->view->getEnvironment()));
+
 $app->get('/login[/]', \reu\backoffice\BO\controller\BOController::class.':login')->setName('login')->add(new GuestMiddleware($c));
 
 $app->post('/login[/]', \reu\backoffice\BO\controller\MemberController::class.':login')->add(new GuestMiddleware($c));
