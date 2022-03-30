@@ -36,7 +36,7 @@
         {% for user in users %}
             <tr>
             <td class="panel_fullnameUtilisateur"><span class="editable">{{ user.fullname }}</span></td>
-            <td class="panel_emailUtilisateur"><span class="editable">{{ user.email }}</span></td>
+            <td class="panel_emailUtilisateur"><span class="editable">{{ user.mail }}</span></td>
             <td class="panel_tokenUtilisateur"><span class="editable">{{ user.token }}</span></td>
             </td>
 
@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Adresse mail utilisateur :</label>
-                                        <input type="text" value="{{ user.email }}"
+                                        <input type="text" value="{{ user.mail }}"
                                             class="form-control update_emailUtilisateur">
                                     </div>
                                     <div class="form-group">
@@ -135,7 +135,7 @@ function deleteUser(id, leBtn) {
     let http = new XMLHttpRequest();
     let params =
         'id=' + id;
-    http.open('POST', '{{ path_for('userDelete') }}', true);
+    http.open('DELETE', '{{ path_for("userDelete") }}', true);
 
     http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     http.onreadystatechange = function () {
@@ -157,20 +157,20 @@ function deleteUser(id, leBtn) {
 function updateUser(id, leBtn) {
     let bodyModal = $(leBtn).parent().prev('.modal-body');
     let fullname = $(bodyModal).find('.update_fullnameUtilisateur').val();
-    let email = $(bodyModal).find('.update_emailUtilisateur').val();
+    let mail = $(bodyModal).find('.update_emailUtilisateur').val();
     let token = $(bodyModal).find('.update_tokenUtilisateur').val();
 
-    if (id, fullname, email, token) {
+    if (id, fullname, mail, token) {
         let model = $(leBtn).parents().closest('.modal');
         let lineUpdate = $(leBtn).parents().closest('tr');
         let http = new XMLHttpRequest();
 
         let params =
             'id=' + id +
-            '&newFullname=' + fullname +
-            '&newEmail=' + email +
-            '&newToken=' + token;
-        http.open('POST', '{{ path_for('userUpdate') }}', true);
+            '&fullname=' + fullname +
+            '&mail=' + mail +
+            '&token=' + token;
+        http.open('PUT', '{{ path_for('userUpdate') }}', true);
 
         http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         http.onreadystatechange = function () {
@@ -178,7 +178,7 @@ function updateUser(id, leBtn) {
                   console.log(http.responseText);
                 if (http.responseText == 'success') {
                     $(lineUpdate).find('.panel_fullnameUtilisateur').text(fullname);
-                    $(lineUpdate).find('.panel_emailUtilisateur').text(email);
+                    $(lineUpdate).find('.panel_emailUtilisateur').text(mail);
                     $(lineUpdate).find('.panel_tokenUtilisateur').text("Rechargez la page");
 
                     $(model).modal('hide');

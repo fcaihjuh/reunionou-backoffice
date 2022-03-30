@@ -3,9 +3,9 @@ namespace reu\backoffice\BO\controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class Controller {
+abstract class Controller {
 
-    private $container;
+    protected $container;
 
     public function __construct($c)
     {

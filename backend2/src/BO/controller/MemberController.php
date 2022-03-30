@@ -1,42 +1,30 @@
 <?php
 
+namespace reu\backoffice\BO\controller;
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+use reu\backoffice\BO\controller\Controller;
+use \reu\backoffice\BO\models\User;
+use \reu\backoffice\BO\models\Admin;
+use \reu\backoffice\BO\models\Event;
+use \reu\backoffice\BO\models\Comment;
 
 class MemberController extends Controller {
 
-    private $container;
+    public function createUser(Request $req, Response $resp, array $args){ 
 
-    public function __construct(\Slim\Container $container){
-        $this->container = $container;
-    }
-
-    public function createUser(Request $req, Response $resp, array $args) : Response {
-
-        $userData = $req->getParsedBody();
-
-        if (!isset($userData['fullname'])) {
-            return Writer::json_error($resp, 400, "Le champ 'fullname' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['mail'])) {
-            return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['username'])) {
-            return Writer::json_error($resp, 400, "Le champ 'username' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['password'])) {
-            return Writer::json_error($resp, 400, "Le champ 'password' ne doit pas être vide et doit être valide");
-        } 
-
-        $fullname = htmlspecialchars(trim($userData['fullname'])));
-        $mail = htmlspecialchars(trim($userData['mail']));
-        $username = htmlspecialchars(trim($userData['username']));
-        $password = htmlspecialchars(trim($userData['password']));
+        $fullname = htmlspecialchars(trim($req->getParam('fullname')));
+        $mail = htmlspecialchars(trim($req->getParam('mail')));
+        $password = htmlspecialchars(trim($req->getParam('password')));
         $token = bin2hex(random_bytes(16));
 
         if(!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
             $this->flash('Cette adresse email est invalide !', 'error');
         } 
         else {
-            if(empty($fullname || $mail || $username || $password)) {
+            if(empty($fullname || $mail || $password)) {
                 $this->flash('Veuillez renseigner tous les champs !', 'error');
             } else {
                 $user = User::where('mail', '=', $mail)->count();
@@ -44,59 +32,42 @@ class MemberController extends Controller {
                     $this->flash('Cette adresse e-mail est déjà utilisée !', 'error');
                 } else {
                     $password_hash = AuthController::hashPassword($password);
-                    User::insert(['fullname' => $fullname, 'mail' => $mail, 'username' => $username, 'password' => $password_hash, 'token' => $token]);
+                    User::insert(['fullname' => $fullname, 'mail' => $mail, 'password' => $password_hash, 'token' => $token]);
                     $this->flash("L'utilisateur a été créé avec succès !");
                 }
             }
         }        
-        return $this->redirect($response, 'createUser');
+        return $this->redirect($resp, 'createUser');
     }
 
-    public function userDelete(Request $req, Response $resp, array $args) : Response {
-        $id = $args['id'];
+    public function userDelete(Request $req, Response $resp){
+        $id = $req->getParam('id');
         $user = User::where('id', '=', $id)->count();
         
         if($user) {
             User::where('id', $id)->delete();
-            $events = Event::where('user_id', $id)->get();
-            Event::where('user_id', $id)->delete();
+            $events = Event::where('id_user', $id)->get();
+            Event::where('id_user', $id)->delete();
 
             foreach($events as $event) {
-                Comment::where('event_id', $event->id)->delete();
+                Comment::where('id_event', $event->id)->delete();
             }
 
-            $data=[
-                'delete' => 'OK'
-            ]
-
-            return Writer::json_output($resp, 200, $data);
+            return 'success';
             
         } else {
 
-            return Writer::json_error($resp, 400, "User $id not found");;
+            return "User $id not found";
         }
     }
 
-    public function userUpdate(Request $req, Response $resp, array $args) : Response {
+    public function userUpdate(Request $req, Response $resp) {
         
-        $id = $args['id'];
+        $id = $req->getParam('id');
 
-        $userData = $req->getParsedBody();
-
-        if (!isset($userData['fullname'])) {
-            return Writer::json_error($resp, 400, "Le champ 'fullname' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['mail'])) {
-            return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['username'])) {
-            return Writer::json_error($resp, 400, "Le champ 'username' ne doit pas être vide et doit être valide");
-        }
-
-        $fullname = htmlspecialchars(trim($userData['fullname'])));
-        $mail = htmlspecialchars(trim($userData['mail']));
-        $username = htmlspecialchars(trim($userData['username']));
-        $checkToken =  htmlspecialchars(trim($userData['token']));
+        $fullname = htmlspecialchars(trim($req->getParam('fullname')));
+        $mail = htmlspecialchars(trim($req->getParam('mail')));
+        $checkToken =  htmlspecialchars(trim($req->getParam('token')));
         $newtoken = bin2hex(random_bytes(16));
 
 
@@ -105,62 +76,42 @@ class MemberController extends Controller {
         } else {
             $user = User::where('id', '=', $id)->count();
             if(!$user) {
-                return Writer::json_error($resp, 400, "User $id not found");;
+                return "User not found";
             } else {
                 if($checkToken == 1)  {
-                    User::where('id', '=', $id)->update(['fullname' => $fullname, 'email' => $mail, 'username' => $username 'token' => $newToken]);
+                    User::where('id', '=', $id)->update(['fullname' => $fullname, 'mail' => $mail, 'username' => $username, 'token' => $newToken]);
                 } else {
-                    User::where('id', '=', $id)->update(['fullname' => $fullname, 'email' => $mail]);
+                    User::where('id', '=', $id)->update(['fullname' => $fullname, 'mail' => $mail]);
                 }
-                
-                $data= [
-                    'put' => 'OK'
-                ]
 
-                return Writer::json_output($resp, 200, $data);;
+                return 'success';
             }
         } 
     }
 
     public function login(Request $req, Response $resp, array $args) {
 
-        $userData = $req->getParsedBody();
-
-        if (!isset($userData['mail'])) {
-            return Writer::json_error($resp, 400, "Le champ 'mail' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['password'])) {
-            return Writer::json_error($resp, 400, "Le champ 'password' ne doit pas être vide et doit être valide");
-        }
-
-        $mail = htmlspecialchars(trim($userData['mail'])));
-        $password = $userData['password'];
+        $mail = htmlspecialchars(trim($req->getParam('mail')));
+        $password = htmlspecialchars(trim($req->getParam('password')));
         
         if(empty($mail) || empty($password)) {
             $this->flash('Un ou plusieurs champs sont vide(s) !', 'error');
         } else {
             if(!AuthController::login($mail, $password)) {
                 $this->flash('Adresse email ou mot de passe incorrect !', 'error');
+                return $this->redirect($resp, 'login');
             } else {
                 return $this->redirect($resp, 'home');
             }
         }
-        return $this->redirect($resp, 'login');
     }
 
     public function profile(Request $req, Response $resp, array $args) {
 
-        $userData = $req->getParsedBody();
 
-        if (!isset($userData['currentPassword'])) {
-            return Writer::json_error($resp, 400, "Le champ 'currentPassword' ne doit pas être vide et doit être valide");
-        }
-        if (!isset($userData['newPassword'])) {
-            return Writer::json_error($resp, 400, "Le champ 'newPassword' ne doit pas être vide et doit être valide");
-        }
         
-        $currentPassword = $userData['currentPassword'];
-        $newPassword = $userData['newPassword'];
+        $currentPassword = htmlspecialchars(trim($req->getParam('currentPassword')));;
+        $newPassword = htmlspecialchars(trim($req->getParam('newPassword')));;
 
         
         $db_password = Admin::select('password')->where('id', $_SESSION['id'])->first();
@@ -172,7 +123,7 @@ class MemberController extends Controller {
         } else {
             $this->flash("Mot de passe actuel incorrect !", 'error');
         }
-        return $this->redirect($response, 'profile');
+        return $this->redirect($resp, 'profile');
     }
 
 }

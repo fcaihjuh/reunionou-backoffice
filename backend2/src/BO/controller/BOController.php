@@ -4,15 +4,11 @@ namespace reu\backoffice\BO\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \reu\backoffice\BO\controller\AuthController;
-use \reu\backoffice\BO\utils\Writer;
+use \reu\backoffice\BO\models\User;
+use \reu\backoffice\BO\models\Event;
+
 
 class BOController extends Controller {
-
-    private $container;
-
-    public function __construct(\Slim\Container $container){
-        $this->container = $container;
-    }
 
     public function home(Request $req, Response $resp) {
         $this->render($resp, 'pages/Home.twig');

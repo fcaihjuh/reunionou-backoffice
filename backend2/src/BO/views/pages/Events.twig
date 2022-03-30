@@ -89,9 +89,8 @@ function deleteEvent(id, leBtn) {
     let lineDelet = $(leBtn).parents().closest('tr');
 
     let http = new XMLHttpRequest();
-    let params =
-        'id=' + id;
-    http.open('POST', '{{ path_for('eventDelete') }}', true);
+    let params = 'id=' + id;
+    http.open('DELETE', '{{ path_for('eventDelete') }}', true);
 
     http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     http.onreadystatechange = function () {

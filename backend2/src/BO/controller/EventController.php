@@ -5,21 +5,15 @@ namespace reu\backoffice\BO\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-use \reu\backoffice\BO\utils\Writer;
-
+use \reu\backoffice\BO\models\Event;
+use \reu\backoffice\BO\models\Comment;
 
 class EventController extends Controller{
 
-    private $container;
-
-    public function __construct(\Slim\Container $container){
-        $this->container = $container;
-    }
-
     
-    public function deleteEvent(Request $req, Response $resp, array $args) : Response {
+    public function deleteEvent(Request $req, Response $resp){
     
-        $id = $args['id'];
+        $id = $req->getParam('id');
         $event = Event::where('id', '=', $id)->count();
     
         if($event)
@@ -27,15 +21,11 @@ class EventController extends Controller{
              Event::where('id', $id)->delete();
              Comment::where('id_event', $id)->delete();
     
-             $data = [
-                "delete" => "OK",
-            ];
-     
-             return Writer::json_output($resp, 200, $data);       
+             return 'success';    
         }
         else
         {
-            return Writer::json_error($resp, 400, "Event $id not found");;
+            return "Event $id not found";
         }
     }
 
