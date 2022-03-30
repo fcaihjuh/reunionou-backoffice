@@ -19,7 +19,7 @@ services:
 #      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
 #      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128
     ports:
-      - "62640:80"
+      - "62647:80"
       - "19043:443"
     volumes:
       - './backend1/public:/var/www/web'
