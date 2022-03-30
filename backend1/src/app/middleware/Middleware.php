@@ -1,6 +1,6 @@
 <?php
-namespace reu\backoffice1\app\middleware;
-use \Slim\Container;
+
+namespace reu\back1\app\middleware;
 
 use \Psr\Http\Message\ServerRequestInterface as Request ;
 use \Psr\Http\Message\ResponseInterface as Response ;

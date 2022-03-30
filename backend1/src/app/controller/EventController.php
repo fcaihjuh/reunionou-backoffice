@@ -6,6 +6,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 
+use \reu\back1\app\models\Comment;
 use \reu\back1\app\models\Event;
 use \reu\back1\app\utils\Writer as Writer;
 
@@ -121,9 +122,10 @@ class EventController {
         if (!isset($eventData['place'])) {
             return Writer::json_error($resp, 400, "Le champ 'place' ne doit pas être vide et doit être valide");
         } 
-
+        $id = $args['id'];
         try{
             $event= Event::where('id', $id)->count();
+           
             if($event){
 
                 $title = filter_var($eventData['title']);
@@ -147,7 +149,7 @@ class EventController {
     }
 
     public function deleteEvent(Request $req, Response $resp, array $args): Response {
-
+        $id = $args['id'];
         $event = Event::where(['id' => $id, 'user_id' => $_SESSION['id']])->count();
         if($event){
             Comment::where('event_id', $id)->delete();

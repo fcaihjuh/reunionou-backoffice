@@ -7,6 +7,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 
 use \reu\back1\app\models\Comment;
+use \reu\back1\app\models\Event;
 use \reu\back1\app\utils\Writer;
 
 class CommentController {
@@ -62,7 +63,7 @@ class CommentController {
 
     public function postComment(Request $res, Response $resp, array $args): Response{
 
-        $commentData = $req->getParsedBody();
+        $commentData = $res->getParsedBody();
 
         if (!isset($commentData['content'])) {
             return Writer::json_error($resp, 400, "Le champ 'content' ne doit pas être vide et doit être valide");
@@ -74,8 +75,8 @@ class CommentController {
         try{
             $new_comment=new Comment();
             $new_comment->content= $commentData['content'];
-            $new_comment->user_id=$_SESSION['id'],
-            $new_comment->event_id=$commentData['event_id'],
+            $new_comment->user_id=$_SESSION['id'];
+            $new_comment->event_id=$commentData['event_id'];
 
             $data = [
                 'post'      => true,

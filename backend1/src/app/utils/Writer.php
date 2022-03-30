@@ -1,5 +1,4 @@
 <?php
-
 namespace reu\back1\app\utils;
 
 use \Psr\Http\Message\ResponseInterface as Response ;
