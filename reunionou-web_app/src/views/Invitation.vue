@@ -19,13 +19,13 @@
                   @click="participateEvent(true)"
                   class="button is-success is-light btn-footer"
                 >
-                  {{ member.fullname }} Je participe
+                  Je participe
                 </button>
                 <button
                   @click="participateEvent(false)"
                   class="button is-danger is-light btn-footer"
                 >
-                  {{ member.fullname }} Je participe pas
+                  Je participe pas
                 </button>
               </footer>
             </div>
@@ -179,15 +179,8 @@ export default {
       showMap: true,
     };
   },
-data() {
-    return{
-      member: false,
-    };
+  mounted() {
   },
-    mounted(){
-        this.member = this.$store.getters.getMembre(this.$route.params.idMembre);
-        //console.log(this.$route.params.idMembre)
-    },
   methods: {
     getLocation() {
       if (navigator.geolocation) {
@@ -230,5 +223,5 @@ data() {
 </script>
 
 <style lang="scss">
-@import "../assets/custom.scss";
+@import "../scss/bulma.scss";
 </style>

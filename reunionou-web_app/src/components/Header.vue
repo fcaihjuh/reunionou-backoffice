@@ -1,40 +1,35 @@
 <template>
+<section class="hero header">
+
+  <!-- rendre le header responsive -->
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="https://bulma.io"></a>
+      <router-link class="navbar-item reu" to="/"><a href="/"><img src="../img/Reunionou.png"/></a></router-link>
     </div>
-
-    <div class="navbar-start">
-      <router-link class="navbar-item has-background-warning" to="creerevenement"
-        >Créer un événement</router-link>
-      <router-link class="navbar-item has-background-warning" to="profil"
-        >Gérer mon profil</router-link
-      >
-      <router-link class="navbar-item has-background-warning" to="/creer">Mes événements</router-link>
-    </div>
-
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="buttons">
-          <router-link class="button has-background-grey-lighter" to="deconnexion"
-            >Se déconnecter</router-link
-          >
-        </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <router-link class="navbar-item" to="/events">Mes évènements</router-link>
+        <router-link class="navbar-item" to="/createEvent">Nouvel évènement</router-link>
+         <router-link class="navbar-item" to="/invitation">Invitation</router-link>
+        <router-link class="navbar-item" to="/profil">Profil</router-link>
       </div>
-      <div class="navbar-item">
-        <div>
-          <!--<b>{{$store.state.member.fullname}}</b>-->
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <router-link class="navbar-item button is-warning" to="/signout">Déconnexion</router-link>
+          </div>
         </div>
       </div>
     </div>
-    <figure class="image is-64x64">
-      <img src="../assets/reunionou.png" />
-    </figure>
   </nav>
+</section>
 </template>
 
 <script>
-export default {};
+export default {
+}
 </script>
 
-<style></style>
+<style lang="scss">
+ @import "../scss/bulma.scss";
+</style>

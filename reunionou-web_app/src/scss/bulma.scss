@@ -1,0 +1,78 @@
+@charset "utf-8";
+
+// import all Bulma
+// you can also import only files you need
+@import "../../node_modules/bulma/bulma.sass";
+
+// set variables, update styles or create your own classes
+// existing variables :
+// https://bulma.io/documentation/customize/variables/
+
+// Example (copied from Bulma's documentation) :
+
+// Import a Google Font
+ //@import url('https://fonts.google.com/specimen/Dela+Gothic+One');
+ @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alegreya+Sans:wght@300&family=Cormorant+Garamond:wght@300;600&family=Lora:wght@500&family=Old+Standard+TT&family=Pacifico&family=Poppins&family=Roboto+Mono:wght@500&family=Roboto:wght@300;400&family=Space+Mono&display=swap');
+ h1 {
+    text-align: center;
+    font-family: "Abril Fatface", sans-serif;
+  }
+  .map {
+    clear:both;
+      width: 10%;
+      height: 10%;
+      overflow :hidden
+    }
+  .title {
+    color: white;
+  }
+  .title-chat {
+    color: black;
+  }
+  .btn-footer {
+    margin: 10px 0em 0px 15em;
+    width: 5em;
+  }
+
+  .error-login {
+    color: red;
+  }
+
+  html,
+body {
+  height: 100%;
+  background-color: #d5d5d8;
+  .chargement {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    button {
+      //background-color: transparent;
+      background-color: rgb(238, 234, 234);
+    }
+  }
+}
+.title.is-4.has-text-centered{
+    color:black;
+}
+.title.is-4{
+  color:black;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to{
+  opacity: 0;
+}
+.header{
+  background-color: rgb(255, 255, 128);;
+}
+.navbar-item{
+  color : rgb(0, 0, 0);
+}
+.reu{
+    font-family: 'Comic Sans Serif', sans-serif;
+}
