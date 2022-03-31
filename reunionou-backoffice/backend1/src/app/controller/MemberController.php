@@ -120,8 +120,7 @@ class MemberController {
                 if(AuthController::verifyPassword($userData['password'], $user->password)){
                     $data=[
                         'post'      => true,
-                        'fullname'  => $user->fullname,
-                        'email'     => $user->mail,
+                        'mail'     => $user->mail,
                         'token'     => $user->token
                     ];
                     return Writer::json_output($resp, 200, $data);

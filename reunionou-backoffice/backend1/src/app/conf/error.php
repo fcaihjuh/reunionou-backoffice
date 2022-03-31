@@ -30,7 +30,7 @@ return [
     },
 
 
-    // fonction not allowed déclenche une erreur dans le cas où l'url de la requête correspond à une route existante mais pas la méthode HTTP
+    // fonction notAllowedHandler déclenche une erreur dans le cas où l'url de la requête correspond à une route existante mais pas la méthode HTTP
     'notAllowedHandler' => function ($container) {
 
         // la fonction reçoit la requête, la réponse et un tableau des méthodes autorisées
@@ -61,10 +61,10 @@ return [
         };
     },
     
-    // fonction phpErrorHandler est declenché lorsqu'on a une erreur PHP dans le script
+    // fonction phpErrorHandler est declenchée lorsqu'on a une erreur PHP dans le script
     'phpErrorHandler' => function ($container) {
 
-        //La fonction reçoit la requête, la réponse et l'exeception à l'origine de l'erreur
+        //La fonction reçoit la requête, la réponse et l'exception à l'origine de l'erreur
         return function (Request $req, Response $resp, \Throwable $error) use ($container): Response {
 
             //on compose le message de retours
@@ -87,7 +87,7 @@ return [
         };
     },
 
-    //Fonction déclenchée à toute erreur du client exemple : ressources non trouvé,
+    //Fonction déclenchée à toute erreur du client exemple : ressources non trouvées,
     'clientError' => function ($container) {
         return function (Request $req, Response $resp, int $code_error, string $msg) use ($container) {
             
