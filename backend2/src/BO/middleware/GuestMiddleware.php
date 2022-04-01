@@ -15,7 +15,7 @@ class GuestMiddleware {
 
     public function __invoke(Request $request, Response $response, $next) {
         if(AuthController::isLogged()) {
-            return $response->withStatus(200)->withHeader('Location', $this->container->router->pathFor('home'));
+            return $response->withStatus(300)->withHeader('Location', $this->container->router->pathFor('home'));
         }
 
         return $next($request, $response);
