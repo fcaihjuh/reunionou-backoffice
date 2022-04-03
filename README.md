@@ -24,11 +24,11 @@
 
 Clonage du projet :
 
-    git clone ...
+    git clone https://github.com/fcaihjuh/reunionou-backoffice.git
 
 Lancement des containers Docker :
 
-    cd reunionou
+    cd reunionou-backoffice/reunionou-backoffice
     docker-compose up -d
 
 Import de la base de données MySQL :
